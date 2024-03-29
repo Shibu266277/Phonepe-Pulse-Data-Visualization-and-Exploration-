@@ -255,6 +255,30 @@ def agg_user_plot_3(df, state):
     st.plotly_chart(fig_line_1)
 
 
+## MAP INSURANCE ANALYSIS CODE BELOW
+#  TRANSACTION_AMOUNT AND DISTRICTS Chart View 
+def map_insurance_SYQ_D(df, STATE):
+
+    SYQTCA=df[df["STATES"] == STATE]
+    SYQTCA.reset_index(drop=True, inplace= True)
+    
+    SYQTCA_group=SYQTCA.groupby("DISTRICTS")[["TRANSACTION_COUNT","TRANSACTION_AMOUNT"]].sum()
+    SYQTCA_group.reset_index(inplace= True)
+
+    coll1,coll2=st.columns(2)
+    with coll1:
+        fig_bar_1= px.bar(SYQTCA_group, x="TRANSACTION_AMOUNT", y="DISTRICTS", height=500, width=500,
+                            title=f"{STATE.upper()} DISTRICTS TRANSACTION AMOUNT",
+                            color_discrete_sequence= px.colors.sequential.Sunsetdark_r)
+        st.plotly_chart(fig_bar_1)
+
+    with coll2:
+        fig_bar_2= px.bar(SYQTCA_group, x="TRANSACTION_COUNT", y= "DISTRICTS", height=500, width=500,
+                            title=f"{STATE.upper()} DISTRICTS TRANSACTION COUNT",
+                            color_discrete_sequence= px.colors.sequential.Darkmint_r)
+        st.plotly_chart(fig_bar_2)
+
+
 
 # Creating Design Streamlit Page  
 
@@ -334,7 +358,24 @@ elif select== "ANALYSISTIC DATA":
                                 ma_insurance["YEARS"].min(), key="year_slider")
             map_insurance_SYQ_Y=TRANSACTION_COUNT_AMOUNT_Y(ma_insurance,years)
 
+            coll1,coll2=st.columns(2)
+            with coll1:
+                states=st.selectbox("CHOOSE THE STATE",map_insurance_SYQ_Y["STATES"].unique())
+            map_insurance_SYQ_D(map_insurance_SYQ_Y, states)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                QUARTER=st.slider("CHOOSE THE QUARTER",map_insurance_SYQ_Y["QUARTERS"].min(),map_insurance_SYQ_Y["QUARTERS"].max(),map_insurance_SYQ_Y["QUARTERS"].min())
+            map_insurance_SYQ_Y_Q= TRANSACTION_AMOUNT_COUNT_Y_Q(map_insurance_SYQ_Y, QUARTER)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                states=st.selectbox("CHOOSE THE STATE TYPE", map_insurance_SYQ_Y_Q["STATES"].unique())
+            map_insurance_SYQ_D(map_insurance_SYQ_Y_Q, states)
+                                
+        
         elif button_type2=="MAP TRANSACTION":
+            
             pass
         elif button_type2=="MAP USER":
             pass
