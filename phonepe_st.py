@@ -310,6 +310,71 @@ def map_user_plot_2(df, QUARTER):
     return map_user_y_Q
 
 
+## MAP USER PLOT 3
+def map_user_plot_3(df, STATE):
+    agg_user_YQS=df[df["STATES"]== STATE]
+    agg_user_YQS.reset_index(drop=True, inplace=True)
+
+    coll1,coll2= st.columns(2)
+    with coll1:
+        fig_MU_pie_1 = px.pie(agg_user_YQS, values='REGISTEREDUSERS', names='DISTRICTS', title='REGISTERED USERS ANALYSIS',
+                            height=400, width=500,hole= 0.1)
+        st.plotly_chart(fig_MU_pie_1)
+
+    with coll2:
+        fig_MU_pie_2 = px.pie(agg_user_YQS, values='APPOPENS', names='DISTRICTS', title='APPOPENS / USERS ANALYSIS',
+                            height=400, width=500,hole= 0.2)
+        st.plotly_chart(fig_MU_pie_2)
+
+
+## TOP INSURANCE PLOT 1
+def top_insurance_plot_1(df, STATE):
+    top_insur_Y=df[df["STATES"]==STATE]
+    top_insur_Y.reset_index(drop=True, inplace=True)
+    
+    coll1,coll2= st.columns(2)
+    with coll1:
+        fig_top_insur_bar_1 = px.bar(top_insur_Y, x='QUARTERS', y='TRANSACTION_AMOUNT', hover_data="PINCODES", 
+                                    title='TRANSACTION AMOUNT ANALYSIS',color_discrete_sequence=px.colors.sequential.PuBu_r,
+                                    height=600, width=500,)
+        st.plotly_chart(fig_top_insur_bar_1)
+
+    with coll2:
+        fig_top_insur_bar_2 = px.bar(top_insur_Y, x='QUARTERS', y='TRANSACTION_COUNT', hover_data="PINCODES", 
+                                    title='TRANSACTION COUNT ANALYSIS', color_discrete_sequence=px.colors.sequential.Sunsetdark_r,
+                                    height=600, width=500,)
+        st.plotly_chart(fig_top_insur_bar_2)
+
+
+## TOP USER PLOT 1(df, YEAR):
+def top_user_plot_1(df, YEAR):
+    top_user_Y=df[df["YEARS"]==YEAR]
+    top_user_Y.reset_index(drop=True, inplace=True)
+
+    top_user_Y_group=pd.DataFrame(top_user_Y.groupby(["STATES", "QUARTERS"])["REGISTEREDUSERS"].sum())
+    top_user_Y_group.reset_index(inplace=True)
+
+
+    fig_top_plot_1= px.bar(top_user_Y_group, x="STATES", y="REGISTEREDUSERS", color="QUARTERS", 
+                        hover_name="STATES", width=600,height=500,
+                        title=f"{YEAR} REGISTERED USERS",
+                        color_discrete_sequence=px.colors.sequential.Sunsetdark_r,)
+    st.plotly_chart(fig_top_plot_1)
+
+    return top_user_Y
+
+## TOP USER PLOT 2
+def top_user_plot_2(df, STATE):
+    top_user_Y_S=df[df["STATES"]==STATE]
+    top_user_Y_S.reset_index(drop=True, inplace=True)
+
+    fig_top_plot_2=px.bar(top_user_Y_S, x="QUARTERS", y="REGISTEREDUSERS", title= "REGISTEREDUSERS,PINCODES,QUARTERS / TOP USER",
+                        width=600,height=500, color= "REGISTEREDUSERS", hover_data="PINCODES",
+                        color_continuous_scale=px.colors.sequential.Sunsetdark_r)
+    st.plotly_chart(fig_top_plot_2)
+
+
+
 # Creating Design Streamlit Page  
 
 st.set_page_config(layout= "wide")
@@ -443,17 +508,65 @@ elif select== "ANALYSISTIC DATA":
                                   map_user_y["QUARTERS"].min())
             map_user_SYQ_Y_Q= map_user_plot_2(map_user_y, QUARTER)
 
+            coll1,coll2=st.columns(2)
+            with coll1:
+                states=st.selectbox("CHOOSE THE STATE TYPE /MU", map_user_SYQ_Y_Q["STATES"].unique())
+            map_user_plot_3(map_user_SYQ_Y_Q, states)
+
 
 
     with tab3:
         button_type3=st.radio("SELECT TOP ANALYSIS",["TOP INSURANCE", "TOP TRANSACTION", "TOP USER"])
 
         if button_type3=="TOP INSURANCE":
-            pass
+            coll1,coll2=st.columns(2)
+            with coll1:
+                years=st.slider("CHOOSE THE YEAR / TOP INSUR",to_insurance["YEARS"].min(),to_insurance["YEARS"].max(),
+                                to_insurance["YEARS"].min())
+            top_insurance_TRANS_Y=TRANSACTION_COUNT_AMOUNT_Y(to_insurance,years)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                states=st.selectbox("CHOOSE THE STATE / TOP INSUR",top_insurance_TRANS_Y["STATES"].unique())
+            top_insurance_plot_1(top_insurance_TRANS_Y, states)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                QUARTER=st.slider("CHOOSE THE QUARTER / TOP Y_Q ",top_insurance_TRANS_Y["QUARTERS"].min(),top_insurance_TRANS_Y["QUARTERS"].max(),
+                                  top_insurance_TRANS_Y["QUARTERS"].min())
+            top_insurance_TRANS_Y_Q= TRANSACTION_AMOUNT_COUNT_Y_Q(top_insurance_TRANS_Y, QUARTER)
+
+
         elif button_type3=="TOP TRANSACTION":
-            pass
+            coll1,coll2=st.columns(2)
+            with coll1:
+                years=st.slider("CHOOSE THE YEAR / TOP TRANS",to_transaction["YEARS"].min(),to_transaction["YEARS"].max(),
+                                to_transaction["YEARS"].min())
+            top_transaction_TRANS_Y=TRANSACTION_COUNT_AMOUNT_Y(to_transaction,years)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                states=st.selectbox("CHOOSE THE STATE / TOP TRANS",top_transaction_TRANS_Y["STATES"].unique())
+            top_insurance_plot_1(top_transaction_TRANS_Y, states)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                QUARTER=st.slider("CHOOSE THE QUARTER / TOP TRANS",top_transaction_TRANS_Y["QUARTERS"].min(),top_transaction_TRANS_Y["QUARTERS"].max(),
+                                  top_transaction_TRANS_Y["QUARTERS"].min())
+            top_transaction_TRANS_Y_Q= TRANSACTION_AMOUNT_COUNT_Y_Q(top_transaction_TRANS_Y, QUARTER)
+            
         elif button_type3=="TOP USER":
-            pass
-elif select == "TOP CHART ANALYSIS":
-    pass
+            coll1,coll2=st.columns(2)
+            with coll1:
+                years=st.slider("CHOOSE THE YEAR / TOP USER",to_user["YEARS"].min(),to_user["YEARS"].max(),
+                                to_user["YEARS"].min())
+            top_user_SRQ_Y=top_user_plot_1(to_user,years)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                states=st.selectbox("CHOOSE THE STATE / TOP USER",top_user_SRQ_Y["STATES"].unique())
+            top_user_plot_2(top_user_SRQ_Y, states)
+        
+        elif select == "TOP CHART ANALYSIS":
+             pass
 
