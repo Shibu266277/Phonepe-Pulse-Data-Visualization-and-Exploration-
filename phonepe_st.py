@@ -289,10 +289,25 @@ def map_user_plot_1(df, YEAR):
 
     fig_line_1=px.line(map_user_y_group, x="STATES", y=["REGISTEREDUSERS", "APPOPENS"],
                     title=f"{YEAR} STATES REGISTEREDUSERS APPOPENS",markers=True, width=600, height=550,
-                    color_discrete_sequence= px.colors.sequential.RdBu_r)
+                    color_discrete_sequence= px.colors.sequential.Magma)
     st.plotly_chart(fig_line_1)
 
     return map_user_y
+
+## MAP USER PLOT 2
+def map_user_plot_2(df, QUARTER):
+    map_user_y_Q=df[df["QUARTERS"]==QUARTER]
+    map_user_y_Q.reset_index(drop=True, inplace=True)
+
+    map_user_y_Q_group=map_user_y_Q.groupby("STATES")[["REGISTEREDUSERS", "APPOPENS"]].sum()
+    map_user_y_Q_group.reset_index(inplace=True)
+
+    fig_line_1=px.line(map_user_y_Q_group, x="STATES", y=["REGISTEREDUSERS", "APPOPENS"],
+                    title=f"{df['YEARS'].min()} / {QUARTER} QUARTERS REGISTEREDUSERS APPOPENS",markers=True, width=600, height=550,
+                    color_discrete_sequence=px.colors.sequential.PuBu_r)
+    st.plotly_chart(fig_line_1)
+
+    return map_user_y_Q
 
 
 # Creating Design Streamlit Page  
@@ -317,7 +332,7 @@ elif select== "ANALYSISTIC DATA":
         if button_type1=="INSURANCE ANALYSIS":
             coll1,coll2=st.columns(2)
             with coll1:
-                years=st.slider("CHOOSE THE YEAR",agg_insurance["YEARS"].min(),agg_insurance["YEARS"].max(),agg_insurance["YEARS"].min())
+                years=st.slider("CHOOSE THE YEAR ",agg_insurance["YEARS"].min(),agg_insurance["YEARS"].max(),agg_insurance["YEARS"].min())
             SYQTCA_Y=TRANSACTION_COUNT_AMOUNT_Y(agg_insurance,years)
 
             coll1,coll2=st.columns(2)
@@ -375,7 +390,7 @@ elif select== "ANALYSISTIC DATA":
 
             coll1,coll2=st.columns(2)
             with coll1:
-                states=st.selectbox("CHOOSE THE STATE",map_insurance_SYQ_Y["STATES"].unique())
+                states=st.selectbox("CHOOSE THE STATE / DISTRICT VIEW",map_insurance_SYQ_Y["STATES"].unique())
             map_insurance_SYQ_D(map_insurance_SYQ_Y, states)
 
             coll1,coll2=st.columns(2)
@@ -400,12 +415,12 @@ elif select== "ANALYSISTIC DATA":
 
             coll1,coll2=st.columns(2)
             with coll1:
-                states=st.selectbox("CHOOSE THE STATE",map_transaction_SYQ_Y["STATES"].unique())
+                states=st.selectbox("CHOOSE THE STATE / DIST",map_transaction_SYQ_Y["STATES"].unique())
             map_insurance_SYQ_D(map_transaction_SYQ_Y, states)
 
             coll1,coll2=st.columns(2)
             with coll1:
-                QUARTER=st.slider("CHOOSE THE QUARTER",map_transaction_SYQ_Y["QUARTERS"].min(),map_transaction_SYQ_Y["QUARTERS"].max(),
+                QUARTER=st.slider("CHOOSE THE QUARTER / YQ ",map_transaction_SYQ_Y["QUARTERS"].min(),map_transaction_SYQ_Y["QUARTERS"].max(),
                                   map_transaction_SYQ_Y["QUARTERS"].min())
             map_transaction_SYQ_Y_Q= TRANSACTION_AMOUNT_COUNT_Y_Q(map_transaction_SYQ_Y, QUARTER)
 
@@ -418,9 +433,16 @@ elif select== "ANALYSISTIC DATA":
         elif button_type2=="MAP USER":
             coll1,coll2=st.columns(2)
             with coll1:
-                years=st.slider("CHOOSE THE YEAR",ma_user["YEARS"].min(),ma_user["YEARS"].max(),
+                years=st.slider("CHOOSE THE YEAR / MU",ma_user["YEARS"].min(),ma_user["YEARS"].max(),
                                 ma_user["YEARS"].min(), key="year_slider")
             map_user_y=map_user_plot_1(ma_user,years)
+
+            coll1,coll2=st.columns(2)
+            with coll1:
+                QUARTER=st.slider("CHOOSE THE QUARTER / MYQ ",map_user_y["QUARTERS"].min(),map_user_y["QUARTERS"].max(),
+                                  map_user_y["QUARTERS"].min())
+            map_user_SYQ_Y_Q= map_user_plot_2(map_user_y, QUARTER)
+
 
 
     with tab3:
