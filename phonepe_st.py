@@ -567,6 +567,17 @@ elif select== "ANALYSISTIC DATA":
                 states=st.selectbox("CHOOSE THE STATE / TOP USER",top_user_SRQ_Y["STATES"].unique())
             top_user_plot_2(top_user_SRQ_Y, states)
         
-        elif select == "TOP CHART ANALYSIS":
-             pass
+elif select == "TOP CHART ANALYSIS":
+    QUESTION=st.selectbox("Choose The Ques", ["7.Transaction amount and count of aggregated insurance?",
+                                                "1.Transaction amount and count of map insurance?",
+                                                "5.Transaction amount and count of top insurance?",
+                                                "3.Transaction amount and count of aggregated transaction?",
+                                                "9.Transaction amount and count of map transaction?",
+                                                "6.Transaction amount and count of top transaction?",
+                                                "10.Transaction count of aggregated user?",
+                                                "2.Registered users of map user?",
+                                                "8.Appopens of map user?",
+                                                "4.Registered users of top user?"])
+
+            
 
