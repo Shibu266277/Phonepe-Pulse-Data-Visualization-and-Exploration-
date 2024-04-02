@@ -374,6 +374,125 @@ def top_user_plot_2(df, STATE):
     st.plotly_chart(fig_top_plot_2)
 
 
+#Create Ques and ans / Data from postgres SQL 
+# SQL connection For Question
+def top_chart_transaction_amount(table_name):
+    phonepe_db=psycopg2.connect(host="localhost",
+                                user="postgres",
+                                port=5432,
+                                database="Project_Phonepe",
+                                password=12345)
+    cursor=phonepe_db.cursor()
+
+    # QUS PLOT 1
+    query1=f'''select states, sum(transaction_amount) as transaction_amount 
+                from {table_name}
+                group by states order by transaction_amount desc 
+                limit 15'''
+
+    cursor.execute(query1)
+    table1=cursor.fetchall()
+    phonepe_db.commit()
+
+    df_1= pd.DataFrame(table1, columns=("states", "transaction amount"))
+    coll1,coll2=st.columns(2)
+    with coll1:
+        fig_amount1= px.bar(df_1, x="states", y="transaction amount", title="TRANSACTION AMOUNT",hover_name= "states",
+                            color_discrete_sequence=px.colors.sequential.Turbo,height=550,width=450)
+        st.plotly_chart(fig_amount1)
+
+
+    # QUS PLOT 2
+    query2=f'''select states, sum(transaction_amount) as transaction_amount 
+                from {table_name}
+                group by states order by transaction_amount 
+                limit 15'''
+
+    cursor.execute(query2)
+    table2=cursor.fetchall()
+    phonepe_db.commit()
+
+    df_2= pd.DataFrame(table2, columns=("states", "transaction amount"))
+    with coll2:
+        fig_amount2= px.bar(df_2, x="states", y="transaction amount", title="TRANSACTION AMOUNT", hover_name= "states",
+                            color_discrete_sequence=px.colors.sequential.Turbo_r,height=650,width=450)
+        st.plotly_chart(fig_amount2)
+
+    # QUS PLOT 3
+    query3=f'''select states, avg(transaction_amount) as transaction_amount 
+                from {table_name}
+                group by states order by transaction_amount'''
+
+    cursor.execute(query3)
+    table3=cursor.fetchall()
+    phonepe_db.commit()
+
+    df_3= pd.DataFrame(table3, columns=("states", "transaction amount"))
+
+    fig_amount3= px.bar(df_3, x="transaction amount", y="states", title="TRANSACTION AMOUNT", hover_name= "states",
+                        orientation= "h",
+                        color_discrete_sequence=px.colors.sequential.amp_r,height=550,width=800)
+    st.plotly_chart(fig_amount3) 
+
+# SQL connection For Question
+def top_chart_transaction_count(table_name):
+    phonepe_db=psycopg2.connect(host="localhost",
+                                user="postgres",
+                                port=5432,
+                                database="Project_Phonepe",
+                                password=12345)
+    cursor=phonepe_db.cursor()
+
+    # QUS PLOT 1
+    query1=f'''select states, sum(transaction_count) as transaction_count 
+                from {table_name}
+                group by states order by transaction_count desc 
+                limit 15'''
+
+    cursor.execute(query1)
+    table1=cursor.fetchall()
+    phonepe_db.commit()
+
+    df_1= pd.DataFrame(table1, columns=("states", "transaction count"))
+    coll1,coll2=st.columns(2)
+    with coll1:
+        fig_amount1= px.bar(df_1, x="states", y="transaction count", title="TRANSACTION COUNT",hover_name= "states",
+                            color_discrete_sequence=px.colors.sequential.Turbo,height=550,width=450)
+        st.plotly_chart(fig_amount1)
+
+
+    # QUS PLOT 2
+    query2=f'''select states, sum(transaction_count) as transaction_count 
+                from {table_name}
+                group by states order by transaction_count 
+                limit 15'''
+
+    cursor.execute(query2)
+    table2=cursor.fetchall()
+    phonepe_db.commit()
+
+    df_2= pd.DataFrame(table2, columns=("states", "transaction_count"))
+    with coll2:
+        fig_amount2= px.bar(df_2, x="states", y="transaction_count", title="TRANSACTION COUNT", hover_name= "states",
+                            color_discrete_sequence=px.colors.sequential.Turbo_r,height=650,width=450)
+        st.plotly_chart(fig_amount2)
+
+    # QUS PLOT 3
+    query3=f'''select states, avg(transaction_count) as transaction_count 
+                from {table_name}
+                group by states order by transaction_count'''
+
+    cursor.execute(query3)
+    table3=cursor.fetchall()
+    phonepe_db.commit()
+
+    df_3= pd.DataFrame(table3, columns=("states", "transaction_count"))
+
+    fig_amount3= px.bar(df_3, x="transaction_count", y="states", title="TRANSACTION COUNT", hover_name= "states",
+                        orientation= "h",
+                        color_discrete_sequence=px.colors.sequential.amp_r,height=550,width=800)
+    st.plotly_chart(fig_amount3)
+
 
 # Creating Design Streamlit Page  
 
@@ -578,6 +697,9 @@ elif select == "TOP CHART ANALYSIS":
                                                 "2.Registered users of map user?",
                                                 "8.Appopens of map user?",
                                                 "4.Registered users of top user?"])
-
+    
+    if QUESTION == "1.Transaction amount and count of map insurance?":
+        top_chart_transaction_amount("aggregated_insurance")
+        top_chart_transaction_count("aggregated_insurance")
             
 
