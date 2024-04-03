@@ -495,20 +495,20 @@ def top_chart_transaction_count(table_name):
 
 
 # Creating Design Streamlit Page  
-
-st.set_page_config(layout= "wide")
-st.title("PHONEPE DATA ANALYSIS")
+        
+st.set_page_config(layout= "wide")    
 st.balloons()
 
 with st.sidebar:
+    # YouTube logo image.svg
+    youtube_logo_url = "https://cdn.worldvectorlogo.com/logos/phonepe-1.svg"
+    st.sidebar.image(youtube_logo_url, width=160)
+    st.sidebar.header(":drak_blue[◀️DATA VISUALIZATION & EXPLORATION▶️]")   
     select=option_menu("MENU CLASSES", ["ANALYSISTIC DATA", "TOP CHART ANALYSIS"])
-    #select = st.selectbox("", ["TITLES", "ANALYTIC DATA", "TOP CHART ANALYSIS"])
-    
-if select== "TITLE":
-    pass
-
-elif select== "ANALYSISTIC DATA":
-    tab1, tab2, tab3 = st.tabs(["AGGREGATED ANALYSISTIC", "MAP ANALYSISTIC", "TOP ANALYSISTIC"])
+      
+   
+if select== "ANALYSISTIC DATA":
+    tab1, tab2, tab3 = st.tabs(["📊AGGREGATED ANALYSISTIC", "📊MAP ANALYSISTIC", "📊TOP ANALYSISTIC"])
 
     with tab1:
         button_type1=st.radio("SELECT AGGRE ANALYSIS", ["INSURANCE ANALYSIS", "TRANSACTION ANALYSIS", "USER ANALYSIS"])
@@ -687,18 +687,9 @@ elif select== "ANALYSISTIC DATA":
             top_user_plot_2(top_user_SRQ_Y, states)
         
 elif select == "TOP CHART ANALYSIS":
-    QUESTION=st.selectbox("Choose The Ques", ["7.Transaction amount and count of aggregated insurance?",
-                                                "1.Transaction amount and count of map insurance?",
-                                                "5.Transaction amount and count of top insurance?",
-                                                "3.Transaction amount and count of aggregated transaction?",
-                                                "9.Transaction amount and count of map transaction?",
-                                                "6.Transaction amount and count of top transaction?",
-                                                "10.Transaction count of aggregated user?",
-                                                "2.Registered users of map user?",
-                                                "8.Appopens of map user?",
-                                                "4.Registered users of top user?"])
+    QUESTION=st.selectbox("Choose The Topic analysis", ["Transaction amount and count of map insurance"])
     
-    if QUESTION == "1.Transaction amount and count of map insurance?":
+    if QUESTION == "Transaction amount and count of map insurance":
         top_chart_transaction_amount("aggregated_insurance")
         top_chart_transaction_count("aggregated_insurance")
             
